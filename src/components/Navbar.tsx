@@ -18,10 +18,9 @@ function Navbar() {
       </div>
 
       {/* Cart icon (placeholder for now) */}
-      <div className="font-body text-sm text-espresso cursor-pointer">
+        <Link to="/cart" className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
         Cart (0)
-      </div>
-
+        </Link>   
     </nav>
   )
 }
