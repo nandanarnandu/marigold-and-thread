@@ -1,36 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.core.security import hash_password, verify_password, create_access_token
+from fastapi import FastAPI, Depends
+from app.routers import auth
+from app.core.deps import get_current_user
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserOut, Token
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+app = FastAPI(title="Marigold & Thread API")
 
-
-@router.post("/signup", response_model=UserOut)
-def signup(user: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-    new_user = User(
-        email=user.email,
-        name=user.name,
-        hashed_password=hash_password(user.password),
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+app.include_router(auth.router)
 
 
-@router.post("/login", response_model=Token)
-def login(credentials: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == credentials.email).first()
+@app.get("/")
+def read_root():
+    return {"message": "Marigold & Thread API is running"}
 
-    if not user or not verify_password(credentials.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    access_token = create_access_token(data={"sub": str(user.id)})
-    return {"access_token": access_token, "token_type": "bearer"}
+@app.get("/me")
+def read_current_user(current_user: User = Depends(get_current_user)):
+    return {"id": current_user.id, "email": current_user.email, "name": current_user.name}
