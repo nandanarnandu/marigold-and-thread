@@ -1,5 +1,14 @@
 export const API_URL = "http://localhost:8000"
 
+export class ApiError extends Error {
+  status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem("token")
 
@@ -13,7 +22,13 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: "Something went wrong" }))
-    throw new Error(error.detail || "Request failed")
+
+    if (response.status === 401 && token) {
+      localStorage.removeItem("token")
+      window.dispatchEvent(new Event("auth:unauthorized"))
+    }
+
+    throw new ApiError(error.detail || "Request failed", response.status)
   }
 
   return response.json()

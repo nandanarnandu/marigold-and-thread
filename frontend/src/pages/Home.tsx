@@ -3,7 +3,7 @@ import Hero from '../components/Hero'
 import OurStory from '../components/OurStory'
 import WhyChooseUs from '../components/WhyChooseUs'
 import ProductCard from '../components/ProductCard'
-import { apiFetch } from '../lib/api'
+import { apiFetch, API_URL } from '../lib/api'
 import type { Product } from '../types/product'
 
 function Home() {
@@ -37,7 +37,7 @@ function Home() {
               id={String(product.id)}
               name={product.name}
               price={product.price}
-              image={product.image_url ?? ''}
+              image={product.image_url ? `${API_URL}${product.image_url}` : ''}
             />
           ))}
         </div>

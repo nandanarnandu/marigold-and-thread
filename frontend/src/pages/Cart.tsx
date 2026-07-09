@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { apiFetch } from '../lib/api'
+import { apiFetch, ApiError, API_URL } from '../lib/api'
 import { useAuth } from '../context/useAuth'
 
 type CartItem = {
@@ -34,12 +34,19 @@ function Cart() {
 
     apiFetch('/cart/')
       .then((data) => setCart(data))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) navigate('/login')
+      })
       .finally(() => setLoading(false))
   }, [isLoggedIn, navigate])
 
   async function removeItem(itemId: number) {
-    const updated = await apiFetch(`/cart/items/${itemId}`, { method: 'DELETE' })
-    setCart(updated)
+    try {
+      const updated = await apiFetch(`/cart/items/${itemId}`, { method: 'DELETE' })
+      setCart(updated)
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) navigate('/login')
+    }
   }
 
   async function handleCheckout() {
@@ -47,6 +54,10 @@ function Cart() {
       await apiFetch('/orders/', { method: 'POST' })
       navigate('/')
     } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        navigate('/login')
+        return
+      }
       alert(err instanceof Error ? err.message : 'Checkout failed')
     }
   }
@@ -76,7 +87,7 @@ function Cart() {
             <div key={item.id} className="flex items-center gap-5 border-b border-sage/30 pb-6">
               <div className="w-24 h-32 bg-sage/20 rounded-md overflow-hidden flex-shrink-0">
                 <img
-                  src={item.product.image_url ?? ''}
+                  src={item.product.image_url ? `${API_URL}${item.product.image_url}` : ''}
                   alt={item.product.name}
                   className="w-full h-full object-cover"
                 />

@@ -1,9 +1,17 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { apiFetch } from '../lib/api'
 import { AuthContext } from './auth-context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'))
+
+  useEffect(() => {
+    function handleUnauthorized() {
+      setToken(null)
+    }
+    window.addEventListener('auth:unauthorized', handleUnauthorized)
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
+  }, [])
 
   async function login(email: string, password: string) {
     const data = await apiFetch('/auth/login', {
