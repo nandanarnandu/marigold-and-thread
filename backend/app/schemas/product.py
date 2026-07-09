@@ -8,6 +8,7 @@ class ProductCreate(BaseModel):
     price: float
     image_url: Optional[str] = None
     category: Optional[str] = None
+    subcategory: Optional[str] = None
     stock: int = 0
 
 
@@ -17,6 +18,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     image_url: Optional[str] = None
     category: Optional[str] = None
+    subcategory: Optional[str] = None
     stock: Optional[int] = None
 
 
@@ -27,6 +29,7 @@ class ProductOut(BaseModel):
     price: float
     image_url: Optional[str] = None
     category: Optional[str] = None
+    subcategory: Optional[str] = None
     stock: int
 
     class Config:

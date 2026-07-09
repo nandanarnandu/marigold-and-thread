@@ -5,5 +5,6 @@ export type Product = {
   price: number
   image_url: string | null
   category: string | null
+  subcategory: string | null
   stock: number
 }
