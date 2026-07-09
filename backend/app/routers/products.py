@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from sqlalchemy import or_
+from typing import List, Optional
 from app.core.database import get_db
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate, ProductOut
@@ -9,8 +10,31 @@ router = APIRouter(prefix="/products", tags=["products"])
 
 
 @router.get("/", response_model=List[ProductOut])
-def list_products(db: Session = Depends(get_db)):
-    return db.query(Product).all()
+def list_products(
+    search: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    subcategory: Optional[str] = Query(None),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, le=100),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Product)
+
+    if search:
+        query = query.filter(
+            or_(
+                Product.name.ilike(f"%{search}%"),
+                Product.description.ilike(f"%{search}%"),
+            )
+        )
+
+    if category:
+        query = query.filter(Product.category == category)
+
+    if subcategory:
+        query = query.filter(Product.subcategory == subcategory)
+
+    return query.offset(skip).limit(limit).all()
 
 
 @router.get("/{product_id}", response_model=ProductOut)
