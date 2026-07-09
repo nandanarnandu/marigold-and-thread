@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Depends
-from app.routers import auth
+from app.routers import auth, products
 from app.core.deps import get_current_user
 from app.models.user import User
 
 app = FastAPI(title="Marigold & Thread API")
 
 app.include_router(auth.router)
+app.include_router(products.router)
 
 
 @app.get("/")
