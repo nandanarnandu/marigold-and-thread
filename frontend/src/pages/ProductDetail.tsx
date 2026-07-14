@@ -118,6 +118,22 @@ function ProductDetail() {
           <h1 className="font-heading text-4xl text-espresso mb-3">{product.name}</h1>
           <p className="font-body text-xl text-terracotta mb-2">₹{product.price}</p>
 
+          {/* Colour and rating */}
+          <div className="flex items-center gap-4 mb-4">
+            {product.rating > 0 && (
+              <p className="font-body text-sm text-espresso/70">
+                {'★'.repeat(Math.round(product.rating))}
+                {'☆'.repeat(5 - Math.round(product.rating))}
+                <span className="ml-1 text-espresso/50">({product.rating})</span>
+              </p>
+            )}
+            {product.colour && (
+              <p className="font-body text-sm text-espresso/70">
+                Colour: <span className="text-espresso">{product.colour}</span>
+              </p>
+            )}
+          </div>
+
           {/* Stock status */}
           <p className={`font-body text-sm mb-6 ${outOfStock ? 'text-red-600' : 'text-espresso/50'}`}>
             {outOfStock ? 'Out of stock' : `${product.stock} in stock`}
