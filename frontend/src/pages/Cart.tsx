@@ -7,12 +7,14 @@ type CartItem = {
   id: number
   product_id: number
   quantity: number
-  product: {
+    product: {
     id: number
     name: string
     price: number
     image_url: string | null
+    stock: number
   }
+
 }
 
 type CartData = {
@@ -48,6 +50,19 @@ function Cart() {
       if (err instanceof ApiError && err.status === 401) navigate('/login')
     }
   }
+
+    async function updateQuantity(itemId: number, quantity: number) {
+      if (quantity < 1) return
+      try {
+        const updated = await apiFetch(`/cart/items/${itemId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ quantity }),
+        })
+        setCart(updated)
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 401) navigate('/login')
+      }
+    }
 
   async function handleCheckout() {
     try {
@@ -95,7 +110,23 @@ function Cart() {
 
               <div className="flex-1">
                 <h3 className="font-heading text-lg text-espresso">{item.product.name}</h3>
-                <p className="font-body text-sm text-espresso/60 mt-1">Qty: {item.quantity}</p>
+                                <div className="flex items-center gap-3 mt-2 border border-sage/40 rounded-full overflow-hidden w-fit">
+                                  <button
+                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                    disabled={item.quantity <= 1}
+                                    className="w-8 h-8 font-body text-espresso hover:bg-sage/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  >
+                                    −
+                                  </button>
+                                  <span className="w-6 text-center font-body text-sm text-espresso">{item.quantity}</span>
+                                  <button
+                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                    disabled={item.quantity >= item.product.stock}
+                                    className="w-8 h-8 font-body text-espresso hover:bg-sage/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  >
+                                    +
+                                  </button>
+                                </div>
               </div>
 
               <p className="font-body text-terracotta">₹{item.product.price * item.quantity}</p>
