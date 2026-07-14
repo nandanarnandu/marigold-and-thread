@@ -25,6 +25,10 @@ function Navbar() {
             Cart
           </Link>
 
+          <Link to="/orders" className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
+            Orders
+          </Link>
+
           {isLoggedIn ? (
             <button onClick={logout} className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
               Log Out
