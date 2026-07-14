@@ -29,6 +29,10 @@ function Navbar() {
             Orders
           </Link>
 
+          <Link to="/wishlist" className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
+            Wishlist
+          </Link>
+
           {isLoggedIn ? (
             <button onClick={logout} className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
               Log Out

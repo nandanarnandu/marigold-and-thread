@@ -57,6 +57,26 @@ function ProductDetail() {
     }
   }
 
+    async function handleAddToWishlist() {
+    if (!isLoggedIn) {
+      navigate('/login')
+      return
+    }
+    try {
+      await apiFetch('/wishlist/items', {
+        method: 'POST',
+        body: JSON.stringify({ product_id: Number(id) }),
+      })
+      setMessage('Added to wishlist!')
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        navigate('/login')
+        return
+      }
+      setMessage(err instanceof Error ? err.message : 'Failed to add to wishlist')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-ivory">
@@ -149,6 +169,13 @@ function ProductDetail() {
               Out of Stock
             </button>
           )}
+
+          <button
+            onClick={handleAddToWishlist}
+            className="font-body text-sm text-espresso border border-sage/40 px-6 py-3 rounded-full hover:border-terracotta hover:text-terracotta transition-colors mt-4"
+          >
+            Wishlist
+          </button>
 
           {message && <p className="font-body text-sm text-espresso/70 mt-4">{message}</p>}
 

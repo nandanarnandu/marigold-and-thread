@@ -18,6 +18,7 @@ from app.models.user import User  # noqa
 from app.models.product import Product  # noqa
 from app.models.cart import Cart, CartItem  # noqa
 from app.models.order import Order, OrderItem  # noqa
+from app.models.wishlist import WishlistItem  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
