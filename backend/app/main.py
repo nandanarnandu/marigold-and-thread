@@ -38,9 +38,9 @@ def read_root():
     return {"message": "Marigold & Thread API is running"}
 
 
-@app.get("/me")
+@app.get("/me", response_model=UserOut)
 def read_current_user(current_user: User = Depends(get_current_user)):
-    return {"id": current_user.id, "email": current_user.email, "name": current_user.name}
+    return current_user
 
 
 @app.put("/me", response_model=UserOut)
