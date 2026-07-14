@@ -10,6 +10,7 @@ import Contact from './pages/Contact'
 import Cart from './pages/Cart'
 import Orders from './pages/Orders'
 import Wishlist from './pages/Wishlist'
+import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -27,6 +28,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>

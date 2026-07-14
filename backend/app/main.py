@@ -1,11 +1,15 @@
 from pathlib import Path
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
 from app.routers import auth, products, cart, orders, wishlist
 from app.core.deps import get_current_user
+from app.core.database import get_db
+from app.core.security import verify_password, hash_password
 from app.models.user import User
+from app.schemas.user import UserOut, UserUpdate, PasswordChange
 
 app = FastAPI(title="Marigold & Thread API")
 
@@ -37,3 +41,37 @@ def read_root():
 @app.get("/me")
 def read_current_user(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "email": current_user.email, "name": current_user.name}
+
+
+@app.put("/me", response_model=UserOut)
+def update_profile(
+    updates: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if updates.email and updates.email != current_user.email:
+        existing = db.query(User).filter(User.email == updates.email).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already in use")
+        current_user.email = updates.email
+
+    if updates.name:
+        current_user.name = updates.name
+
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@app.put("/me/password")
+def change_password(
+    payload: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    current_user.hashed_password = hash_password(payload.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}

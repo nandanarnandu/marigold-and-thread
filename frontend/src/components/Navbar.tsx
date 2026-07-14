@@ -34,9 +34,14 @@ function Navbar() {
           </Link>
 
           {isLoggedIn ? (
-            <button onClick={logout} className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
-              Log Out
-            </button>
+            <>
+              <Link to="/profile" className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
+                Profile
+              </Link>
+              <button onClick={logout} className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
+                Log Out
+              </button>
+            </>
           ) : (
             <Link to="/login" className="font-body text-sm text-espresso hover:text-terracotta transition-colors">
               Log In
