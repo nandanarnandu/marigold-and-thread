@@ -7,4 +7,7 @@ export type Product = {
   category: string | null
   subcategory: string | null
   stock: number
+  colour: string | null
+  rating: number
+
 }

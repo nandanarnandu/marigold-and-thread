@@ -13,3 +13,5 @@ class Product(Base):
     category = Column(String, nullable=True)
     subcategory = Column(String, nullable=True)
     stock = Column(Integer, default=0)
+    colour = Column(String, nullable=True)
+    rating = Column(Float, nullable=True)

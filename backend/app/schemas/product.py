@@ -10,6 +10,9 @@ class ProductCreate(BaseModel):
     category: Optional[str] = None
     subcategory: Optional[str] = None
     stock: int = 0
+    colour: Optional[str] = None
+    rating: Optional[float] = 0.0
+
 
 
 class ProductUpdate(BaseModel):
@@ -20,6 +23,9 @@ class ProductUpdate(BaseModel):
     category: Optional[str] = None
     subcategory: Optional[str] = None
     stock: Optional[int] = None
+    colour: Optional[str] = None
+    rating: Optional[float] = 0.0
+
 
 
 class ProductOut(BaseModel):
@@ -31,6 +37,9 @@ class ProductOut(BaseModel):
     category: Optional[str] = None
     subcategory: Optional[str] = None
     stock: int
+    colour: Optional[str] = None
+    rating: Optional[float] = 0.0
+
 
     class Config:
         from_attributes = True
